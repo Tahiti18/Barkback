@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    env_file: .env
+    command: gunicorn -c gunicorn_conf.py app.main:app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./:/app
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: barkbacks
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  worker:
+    build: .
+    env_file: .env
+    command: celery -A app.workers.celery_app.celery_app worker --loglevel=INFO --concurrency=2
+    depends_on:
+      - api
+      - redis
+      - db
+    volumes:
+      - ./:/app
+  beat:
+    build: .
+    env_file: .env
+    command: celery -A app.workers.celery_app.celery_app beat --loglevel=INFO
+    depends_on:
+      - api
+      - redis
+      - db
+    volumes:
+      - ./:/app
+volumes:
+  pgdata:
