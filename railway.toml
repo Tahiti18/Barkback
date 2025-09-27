@@ -3,14 +3,12 @@ builder = "NIXPACKS"
 
 [deploy]
 numReplicas = 1
-# Run Alembic migrations first, then start the API
 startCommand = "bash -lc 'alembic upgrade head && gunicorn -c gunicorn_conf.py app.main:app'"
 healthcheckPath = "/health"
 restartPolicyType = "ON_FAILURE"
 
 [[services]]
 name = "api"
-# Run Alembic migrations first, then start the API
 startCommand = "bash -lc 'alembic upgrade head && gunicorn -c gunicorn_conf.py app.main:app'"
 healthcheckPath = "/health"
 env = [
@@ -33,8 +31,7 @@ env = [
 
 [[services]]
 name = "worker"
-# Apply migrations, then start Celery worker
-startCommand = "bash -lc 'alembic upgrade head && celery -A app.workers.celery_app.celery_app worker --loglevel=INFO --concurrency=2'"
+startCommand = "bash -lc 'alembic upgrade head && celery -A app.workers.celery_app worker --loglevel=info'"
 env = [
   "ENV",
   "PORT",
