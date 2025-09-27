@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from app.deps.auth import get_current_user
 from app.services.s3 import presign_put, presign_get
 
 router = APIRouter(prefix="/v1/uploads", tags=["uploads"])
@@ -8,6 +7,10 @@ router = APIRouter(prefix="/v1/uploads", tags=["uploads"])
 class PresignRequest(BaseModel):
     key: str
     content_type: str
+
+# Normal endpoint (keeps auth for real use later)
+from app.deps.auth import get_current_user
+from fastapi import Depends
 
 @router.post("/presign")
 def presign(req: PresignRequest, user=Depends(get_current_user)):
@@ -17,9 +20,13 @@ def presign(req: PresignRequest, user=Depends(get_current_user)):
     get_url = presign_get(req.key)
     return {"put_url": put_url, "get_url": get_url}
 
-# --- Temporary GET route for quick testing on iPad ---
+# Public test endpoints (no auth) so you can click from iPad
+@router.get("/_ping")
+def ping_uploads():
+    return {"ok": True, "path": "/v1/uploads"}
+
 @router.get("/presign/test")
-def presign_test(user=Depends(get_current_user)):
+def presign_test():
     key = "dev/test.txt"
     ct = "text/plain"
     put_url = presign_put(key, ct)
