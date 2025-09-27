@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import ORJSONResponse
 from app.config import settings
 from app.utils.logging import configure_logging
 from app.routers import uploads, stories, billing
 
 configure_logging()
 
-app = FastAPI(title="BarkBacks API", default_response_class=None)
+app = FastAPI(title="BarkBacks API", default_response_class=ORJSONResponse)
 
 app.add_middleware(
     CORSMiddleware,
