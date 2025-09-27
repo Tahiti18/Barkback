@@ -11,5 +11,20 @@ restartPolicyType = "ON_FAILURE"
 name = "api"
 startCommand = "gunicorn -c gunicorn_conf.py app.main:app"
 healthcheckPath = "/health"
-ports = ["8000"]
-env = ["ENV", "PORT", "DATABASE_URL", "REDIS_URL", "AWS_REGION", "AWS_S3_BUCKET", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "STRIPE_API_KEY", "STRIPE_WEBHOOK_SECRET", "CLERK_JWKS_URL", "CLERK_ISSUER", "CLERK_AUDIENCE", "SENTRY_DSN", "CORS_ORIGINS"]
+env = [
+  "ENV",
+  "PORT",
+  "DATABASE_URL",
+  "REDIS_URL",
+  "AWS_REGION",
+  "AWS_S3_BUCKET",
+  "AWS_ACCESS_KEY_ID",
+  "AWS_SECRET_ACCESS_KEY",
+  "STRIPE_API_KEY",
+  "STRIPE_WEBHOOK_SECRET",
+  "CLERK_JWKS_URL",
+  "CLERK_ISSUER",
+  "CLERK_AUDIENCE",
+  "SENTRY_DSN",
+  "CORS_ORIGINS"
+]
